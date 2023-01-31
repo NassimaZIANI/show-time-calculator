@@ -1,1 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+$primary: #6e0b14;
+$secondary: #b26666;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+:root {
+  --bs-primary: #6e0b14;
+  --bs-secondary: #b26666;
+}
