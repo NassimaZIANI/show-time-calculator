@@ -1,10 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
-$primary: #6e0b14;
-$secondary: #b26666;
+$primary: rgba(214, 48, 48);
+$secondary: #2d3436;
+$light: #ecf0f1;
 
 @import "../node_modules/bootstrap/scss/bootstrap";
 
 :root {
-  --bs-primary: #6e0b14;
-  --bs-secondary: #b26666;
+  --bs-primary: rgba(214, 48, 48);
+  --bs-secondary: #2d3436;
+}
+
+body {
+  background-color: #2d3436;
+  color: #ecf0f1;
+  font-family: "Helvetica";
 }

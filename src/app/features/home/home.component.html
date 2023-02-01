@@ -1,0 +1,136 @@
+<div
+  class="d-flex flex-column min-vh-100 justify-content-center align-items-center"
+>
+  <div class="container row bg-primary shadow-lg">
+    <div class="col py-5 px-4">
+      <h3 class="fst-italic mb-4">Calculate the show time</h3>
+      <form [formGroup]="showForm" (ngSubmit)="calculateTime()">
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">Show name</span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="The name of the show"
+            aria-label="showName"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="mb-3 row">
+          <div class="col">
+            <label for="seasonsNbr" class="form-label">Season number</label>
+            <input
+              type="number"
+              class="form-control"
+              id="seasonsNbr"
+              placeholder="The number of seasons"
+            />
+          </div>
+          <div class="col">
+            <label for="episodesNbr" class="form-label">Episode number</label>
+            <input
+              type="number"
+              class="form-control"
+              id="episodesNbr"
+              placeholder="Number of episodes"
+            />
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <label for="durationHour" class="form-label"
+            >Duration of an episode</label
+          >
+          <div class="col">
+            <input
+              type="number"
+              class="form-control"
+              id="durationHour"
+              placeholder="The duration in hours"
+            />
+          </div>
+          <div class="col">
+            <input
+              type="number"
+              class="form-control"
+              id="durationMin"
+              placeholder="The duration in minutes"
+            />
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <label for="watchTimeHour" class="form-label"
+            >Watching time per day</label
+          >
+          <div class="col">
+            <input
+              type="number"
+              class="form-control"
+              id="watchTimeHour"
+              placeholder="The watching time in hours"
+            />
+          </div>
+          <div class="col">
+            <input
+              type="number"
+              class="form-control"
+              id="watchTimeMin"
+              placeholder="The watching time in minutes"
+            />
+          </div>
+        </div>
+        <div class="d-md-flex justify-content-md-end">
+          <button class="btn btn-dark">
+            <i class="fa-solid fa-calculator"></i> Calculate
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="col result py-5 px-4">
+      <div class="bg-light rounded p-3">
+        <h4 class="text-center fst-italic mb-4">Result</h4>
+        <p>The time it takes for you to finish the show "the show name" is:</p>
+        <div
+          class="row bg-secondary rounded p-2 mx-5 d-flex justify-content-between align-items-center text-center"
+        >
+          <div class="col bg-light m-1 pt-2 rounded text-dark">
+            <h2 class="m-0">03</h2>
+            <p>Months</p>
+          </div>
+          <div class="col bg-light m-1 pt-2 rounded text-dark">
+            <h2 class="m-0">08</h2>
+            <p>Days</p>
+          </div>
+          <div class="col bg-light m-1 pt-2 rounded text-dark">
+            <h2 class="m-0">16</h2>
+            <p>Hours</p>
+          </div>
+          <div class="col bg-light m-1 pt-2 rounded text-dark">
+            <h2 class="m-0">40</h2>
+            <p>Minutes</p>
+          </div>
+        </div>
+        <div class="row d-flex justify-content-between">
+          <div class="col m-1 pt-2">
+            <p>Number of episodes you can finish per day</p>
+            <div class="d-flex justify-content-center">
+              <h3
+                class="rounded-circle bg-secondary d-flex flex-column justify-content-center align-items-center text-white"
+              >
+                03
+              </h3>
+            </div>
+          </div>
+          <div class="col m-1 pt-2">
+            <p>Number of episodes you can finish per week</p>
+            <div class="d-flex justify-content-center">
+              <h3
+                class="rounded-circle bg-secondary d-flex justify-content-center align-items-center text-white"
+              >
+                21
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

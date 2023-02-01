@@ -3,7 +3,16 @@
   font-style: normal;
 }
 
+.nav-item:hover {
+  border-bottom: solid 2px var(--bs-primary);
+}
+
+.nav-item:active {
+  border-bottom: solid 2px var(--bs-primary);
+}
+
 .dropdown-item:hover {
-  background-color: var(--bs-secondary);
+  background-color: var(--bs-primary);
+  color: white;
   cursor: pointer;
 }
