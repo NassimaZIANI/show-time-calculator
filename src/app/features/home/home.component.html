@@ -5,6 +5,64 @@
     <div class="col py-5 px-4">
       <h3 class="fst-italic mb-4">Calculate the show time</h3>
       <form [formGroup]="showForm" (ngSubmit)="calculateTime()">
+        <div class="mb-3">
+          <p>Do you want to calculate by the</p>
+          <div class="d-flex mb-3">
+            <span
+              [ngClass]="
+                watchingByEp ? '' : 'fw-bold text-decoration-underline'
+              "
+              >watching time per day</span
+            >
+            <div class="form-switch form-check ms-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="watchingByEp"
+                formControlName="watchingByEp"
+              />
+            </div>
+            <label
+              for="watchingByEp"
+              class="form-check-label"
+              [ngClass]="
+                watchingByEp ? 'fw-bold text-decoration-underline' : ''
+              "
+              >number of episodes per day</label
+            >
+          </div>
+          <div *ngIf="watchingByEp">
+            <div class="col">
+              <input
+                type="number"
+                class="form-control"
+                id="watchEp"
+                placeholder="The number of episodes per day"
+                formControlName="watchEp"
+              />
+            </div>
+          </div>
+          <div class="row" *ngIf="!watchingByEp">
+            <div class="col">
+              <input
+                type="number"
+                class="form-control"
+                id="watchTimeHour"
+                placeholder="The watching time in hours"
+                formControlName="watchTimeHour"
+              />
+            </div>
+            <div class="col">
+              <input
+                type="number"
+                class="form-control"
+                id="watchTimeMin"
+                placeholder="The watching time in minutes"
+                formControlName="watchTimeMin"
+              />
+            </div>
+          </div>
+        </div>
         <div class="input-group mb-3">
           <span class="input-group-text" id="basic-addon1">Show name</span>
           <input
@@ -13,68 +71,74 @@
             placeholder="The name of the show"
             aria-label="showName"
             aria-describedby="basic-addon1"
+            formControlName="showName"
           />
         </div>
-        <div class="mb-3 row">
-          <div class="col">
-            <label for="seasonsNbr" class="form-label">Season number</label>
+        <div class="mb-3">
+          <p>You can't find your show?</p>
+
+          <div class="form-check form-switch form-check-reverse">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="showForm"
+              formControlName="isShowForm"
+            />
+            <label class="form-check-label" for="showForm"
+              >I want to enter the details myself</label
+            >
+          </div>
+        </div>
+        <div *ngIf="isShowForm">
+          <div class="input-group mb-3">
+            <span class="input-group-text" id="seasonsNbr">Season number</span>
             <input
               type="number"
               class="form-control"
-              id="seasonsNbr"
               placeholder="The number of seasons"
+              aria-label="seasonsNbr"
+              aria-describedby="seasonsNbr"
+              formControlName="seasonsNbr"
             />
           </div>
-          <div class="col">
-            <label for="episodesNbr" class="form-label">Episode number</label>
-            <input
-              type="number"
-              class="form-control"
-              id="episodesNbr"
-              placeholder="Number of episodes"
-            />
-          </div>
-        </div>
-        <div class="mb-3 row">
-          <label for="durationHour" class="form-label"
-            >Duration of an episode</label
+          <div
+            class="input-group mb-3"
+            *ngFor="let i of Arr(seasonNbr).fill(1); let x = index"
           >
-          <div class="col">
+            <span class="input-group-text" id="episodesNbr"
+              >Episode number for season {{ x + 1 }}</span
+            >
             <input
               type="number"
               class="form-control"
-              id="durationHour"
-              placeholder="The duration in hours"
+              placeholder="Number of episodes in season {{ x + 1 }}"
+              aria-label="episodesNbr"
+              aria-describedby="episodesNbr"
+              formControlName="episodesNbr"
             />
           </div>
-          <div class="col">
-            <input
-              type="number"
-              class="form-control"
-              id="durationMin"
-              placeholder="The duration in minutes"
-            />
-          </div>
-        </div>
-        <div class="mb-3 row">
-          <label for="watchTimeHour" class="form-label"
-            >Watching time per day</label
-          >
-          <div class="col">
-            <input
-              type="number"
-              class="form-control"
-              id="watchTimeHour"
-              placeholder="The watching time in hours"
-            />
-          </div>
-          <div class="col">
-            <input
-              type="number"
-              class="form-control"
-              id="watchTimeMin"
-              placeholder="The watching time in minutes"
-            />
+          <div class="mb-3 row">
+            <label for="durationHour" class="form-label"
+              >Duration of an episode</label
+            >
+            <div class="col">
+              <input
+                type="number"
+                class="form-control"
+                id="durationHour"
+                placeholder="The duration in hours"
+                formControlName="durationHour"
+              />
+            </div>
+            <div class="col">
+              <input
+                type="number"
+                class="form-control"
+                id="durationMin"
+                placeholder="The duration in minutes"
+                formControlName="durationMin"
+              />
+            </div>
           </div>
         </div>
         <div class="d-md-flex justify-content-md-end">
