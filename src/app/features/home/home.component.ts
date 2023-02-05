@@ -216,7 +216,7 @@ export class HomeComponent implements OnInit, OnDestroy {
               .filter(
                 (v) => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1
               )
-              .slice(0, 10)
+              .slice(0, 3)
       )
     );
 
@@ -225,17 +225,19 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder, private showService: ShowService) {}
 
   ngOnInit(): void {
+    this.showService.getShows().subscribe();
+
     this.subscription.add(
       this.showService.shows$.subscribe((shows: Show[]) => {
-        this.shows = shows;
+        this.shows = [...new Set(shows)];
       })
     );
 
-    this.subscription.add(
+    /* this.subscription.add(
       this.showService.selectedShow$.subscribe((show: Show) => {
         this.show = show;
       })
-    );
+    ); */
     this.createForm();
     this.showForm
       .get('isShowForm')!

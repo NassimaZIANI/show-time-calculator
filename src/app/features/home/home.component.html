@@ -52,14 +52,7 @@
         </div>
         <div class="input-group mb-3">
           <ng-template #rt let-r="result" let-t="term">
-            <!-- <img
-              [src]="
-                'https://upload.wikimedia.org/wikipedia/commons/thumb/' +
-                r['flag']
-              "
-              class="mr-1"
-              style="width: 16px"
-            /> -->
+            <img [src]="r['img']" class="mx-1" style="width: 50px" />
             <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
           </ng-template>
           <label class="input-group-text" for="showName">Show name</label>
