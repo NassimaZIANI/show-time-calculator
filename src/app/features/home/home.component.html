@@ -50,6 +50,11 @@
             />
           </div>
         </div>
+        <p>
+          Please enter the english name of the show you want to calculate. If
+          you can't find your show in the list below, no worries, just fill out
+          the form below
+        </p>
         <div class="input-group mb-3">
           <ng-template #rt let-r="result" let-t="term">
             <img [src]="r['img']" class="mx-1" style="width: 50px" />
@@ -60,45 +65,48 @@
             id="showName"
             type="text"
             class="form-control"
-            [(ngModel)]="model"
+            placeholder="The show name"
             [ngbTypeahead]="search"
             [resultTemplate]="rt"
             [inputFormatter]="formatter"
             formControlName="showName"
           />
         </div>
-        <div class="mb-3">
-          <p>You can't find your show?</p>
-
-          <div class="form-check form-switch form-check-reverse">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              id="showForm"
-              formControlName="isShowForm"
-            />
-            <label class="form-check-label" for="showForm"
-              >I want to enter the details myself</label
-            >
-          </div>
+        <div class="input-group mb-3">
+          <label class="input-group-text" for="seasonsNbr">Season number</label>
+          <input
+            type="number"
+            class="form-control"
+            placeholder="Number of seasons"
+            aria-label="seasonsNbr"
+            id="seasonsNbr"
+            formControlName="seasonsNbr"
+          />
         </div>
-        <div *ngIf="isShowForm">
-          <div class="input-group mb-3">
-            <label class="input-group-text" for="seasonsNbr"
-              >Season number</label
+        <div *ngIf="show" formArrayName="episodesNbr">
+          <div
+            class="input-group mb-3"
+            *ngFor="let ep of episodesNbr.controls; let i = index"
+            [formGroupName]="i"
+          >
+            <label class="input-group-text" for="episodesNbr"
+              >Number of episode in season {{ i + 1 }}</label
             >
             <input
               type="number"
               class="form-control"
-              placeholder="The number of seasons"
-              aria-label="seasonsNbr"
-              id="seasonsNbr"
-              formControlName="seasonsNbr"
+              placeholder="Number of episodes in season {{ i + 1 }}"
+              aria-label="episodesNbr"
+              id="episodesNbr"
+              formControlName="number"
             />
           </div>
+        </div>
+        <div *ngIf="!show" formArrayName="episodesNbr">
           <div
             class="input-group mb-3"
-            *ngFor="let i of Arr(seasonNbr).fill(1); let x = index"
+            *ngFor="let ep of episodesNbr.controls; let x = index"
+            [formGroupName]="x"
           >
             <label class="input-group-text" for="episodesNbr"
               >Episode number for season {{ x + 1 }}</label
@@ -109,22 +117,34 @@
               placeholder="Number of episodes in season {{ x + 1 }}"
               aria-label="episodesNbr"
               id="episodesNbr"
-              formControlName="episodesNbr"
+              formControlName="number"
             />
           </div>
-          <div class="input-group mb-3">
-            <label class="input-group-text" for="duration"
-              >Duration of an episode</label
-            >
-            <input
-              type="time"
-              class="form-control"
-              aria-label="duration"
-              id="duration"
-              placeholder="Duration of an episode"
-              formControlName="duration"
-            />
-          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <label class="input-group-text" for="episodesTotal"
+            >Total episode number</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            placeholder="Total episodes of the show"
+            aria-label="episodesTotal"
+            id="episodesTotal"
+            formControlName="episodesTotal"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <label class="input-group-text" for="duration">Average runtime</label>
+          <input
+            type="time"
+            class="form-control"
+            aria-label="duration"
+            id="duration"
+            placeholder="Duration of an episode"
+            formControlName="duration"
+          />
         </div>
         <div class="mb-3">
           <p>

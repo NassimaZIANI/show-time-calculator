@@ -1,19 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
-import { distinct, expand, map, reduce, tap } from 'rxjs/operators';
+import { distinct, expand, filter, map, reduce, tap } from 'rxjs/operators';
 import { Show } from '../interfaces/show';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShowService {
-  private rootUrl: string = 'https://api.tvmaze.com';
+  private rootUrl: string = 'https://api.tvmaze.com/';
   public shows$: BehaviorSubject<Show[]> = new BehaviorSubject<Show[] | []>([]);
 
-  public selectedShow$: BehaviorSubject<Show> = new BehaviorSubject<Show>(
-    this.shows$.value[0]
-  );
+  public selectedShow$: BehaviorSubject<Show | null> =
+    new BehaviorSubject<Show | null>(null);
 
   constructor(private http: HttpClient) {}
 
@@ -21,7 +20,7 @@ export class ShowService {
     let i: number = 0;
     let showsList: Show[] = [];
 
-    return this.http.get<Show[] | []>(this.rootUrl + '/shows?page=' + i).pipe(
+    return this.http.get<Show[] | []>(this.rootUrl + 'shows?page=' + i).pipe(
       map((data: any) => {
         return data.map((show: any) => {
           return {
@@ -35,9 +34,8 @@ export class ShowService {
       }),
       expand((data: any) => {
         i++;
-        console.log(i);
         return this.http
-          .get<Show[] | []>(this.rootUrl + '/shows?page=' + i)
+          .get<Show[] | []>(this.rootUrl + 'shows?page=' + i)
           .pipe(
             map((data: any) => {
               return data.map((show: any) => {
@@ -61,54 +59,36 @@ export class ShowService {
         this.shows$.next(showsList);
       })
     );
+  }
 
-    /*  do {
-      console.log(i);
-      observableList.push(
-        this.http.get<Show[] | []>(this.rootUrl + '/shows?page=' + i).pipe(
-          map((data: any) => {
-            console.log(i);
-
-            returnedValue = data;
-            return data.map((show: any) => {
-              return {
-                id: show.id,
-                name: show.name,
-                img: show.image.medium,
-                duration: show.averageRuntime,
-                url: show._links.self.href,
-              };
-            });
-          }),
-          tap((shows: Show[]) => {
-            this.shows$.next(shows);
-          })
-        )
-      );
-      console.log(observableList);
-
-      i++;
-    } while (i === 2);
-
-    return forkJoin(observableList); */
-    /* return this.http.get<Show[] | []>(this.rootUrl + '/shows?').pipe(
-      map((data: any) => {
-        console.log(data);
-
-        // returnedValue = data;
-        return data.map((show: any) => {
+  public getShowDetail(show: Show) {
+    return this.http
+      .get<Show>(this.rootUrl + 'shows/' + show.id + '/episodes')
+      .pipe(
+        map((data: any) => {
+          let seasonNbr: number = 1;
+          data.map((d: any) => {
+            seasonNbr = d.season;
+          });
+          let episodesNbr = [];
+          for (let i = 1; i <= seasonNbr; i++)
+            episodesNbr[i] = data.filter((el: any) => el.season === i).length;
           return {
             id: show.id,
             name: show.name,
-            img: show.image.medium,
-            duration: show.averageRuntime,
-            url: show._links.self.href,
+            seasonsNbr: seasonNbr,
+            episodesNbr: episodesNbr,
+            episodesTotal: data.length,
+            duration: show.duration,
+            img: show.img,
+            url: show.url,
           };
-        });
-      }),
-      tap((shows: Show[]) => {
-        this.shows$.next(shows);
-      })
-    ); */
+        }),
+        tap((show: Show) => {
+          console.log(show);
+
+          this.selectedShow$.next(show);
+        })
+      );
   }
 }
