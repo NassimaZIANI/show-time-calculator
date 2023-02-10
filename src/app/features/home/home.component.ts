@@ -26,6 +26,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   public watchingByEp: boolean = false;
   public showName = '';
   public model: any;
+  public result = [0, 0, 0, 0];
+  public resultNbrEpPerDay: number = 0;
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -75,8 +77,6 @@ export class HomeComponent implements OnInit, OnDestroy {
             if (show) {
               this.clearFormArray(this.episodesNbr);
               show.episodesNbr!.map((ep: number) => {
-                console.log(ep);
-
                 const epsForm = this.fb.group({
                   number: ep,
                 });
@@ -118,9 +118,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.showForm
       .get('watchingByEp')!
-      .valueChanges.subscribe(
-        (watchingByEp) => (this.watchingByEp = watchingByEp)
-      );
+      .valueChanges.subscribe((watchingByEp) => {
+        this.showForm.get('watchTime')!.setValue('00:00');
+        this.showForm.get('watchEp')!.setValue('');
+        this.watchingByEp = watchingByEp;
+      });
   }
 
   ngOnDestroy(): void {
@@ -142,6 +144,54 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  public calculateTime() {
+    // get the show Name
+    let showName = this.showForm.value.showName;
+    // check if the name came from the API (get showName.name), if it isn't in the API get it by showName only
+    showName.name
+      ? (this.showName = showName.name)
+      : (this.showName = showName);
+    // calculate the average time of an episode by minute
+    let averageEpInMin = this.toMinutes(this.showForm.value.duration);
+    // calculate the average time for all the show in minutes
+    let totalTimeInMinute = this.showForm.value.episodesTotal * averageEpInMin;
+    let timeByDay = 0;
+    this.showForm.value.watchingByEp
+      ? // if we get the ep per day, we need to calculate the average time to finish those episodes per day
+        (timeByDay = this.showForm.value.watchEp * averageEpInMin)
+      : (timeByDay = this.toMinutes(this.showForm.value.watchTime));
+    // calculate the time it takes to finish the show
+    this.result = this.getTimeNeeded(timeByDay, totalTimeInMinute);
+  }
+
+  getTimeNeeded(timeByDay: number, totalTime: number) {
+    // timeByDay is in minutes so no need to *60
+    let day: number = timeByDay ? timeByDay : 24 * 60;
+    var units: any = {
+      month: day * 30,
+      day: day,
+      hour: 60,
+      minute: 1,
+    };
+
+    var result = [];
+
+    for (var name in units) {
+      var p = Math.floor(totalTime / units[name]);
+      result.push(p);
+      totalTime %= units[name];
+    }
+
+    return result;
+  }
+
+  private toMinutes(duration?: string) {
+    var a = duration!.split(':'); // split it at the colons
+    // Hours are worth 60 minutes.
+    var minutes = +a[0] * 60 + +a[1];
+    return minutes;
+  }
+
   private toHoursAndMinutes(totalMinutes?: number) {
     const hours = Math.floor(totalMinutes! / 60);
     const minutes = totalMinutes! % 60;
@@ -153,10 +203,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       : minutes.toString().length === 1
       ? hours + ':0' + minutes
       : hours + ':' + minutes;
-  }
-
-  public calculateTime() {
-    console.log(this.showForm.value);
   }
 
   get episodesNbr() {

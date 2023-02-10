@@ -3,12 +3,13 @@
   font-style: normal;
 }
 
-.nav-item:hover {
+.active {
   border-bottom: solid 2px var(--bs-primary);
 }
 
-.nav-item:active {
+.nav-item:hover {
   border-bottom: solid 2px var(--bs-primary);
+  cursor: pointer;
 }
 
 .dropdown-item:hover {
