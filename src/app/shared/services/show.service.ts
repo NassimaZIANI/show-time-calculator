@@ -85,8 +85,6 @@ export class ShowService {
           };
         }),
         tap((show: Show) => {
-          console.log(show);
-
           this.selectedShow$.next(show);
         })
       );

@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   public model: any;
   public result = [0, 0, 0, 0];
   public resultNbrEpPerDay: number = 0;
+  public resultNbrEpPerWeek: number = 0;
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -132,34 +133,54 @@ export class HomeComponent implements OnInit, OnDestroy {
   private createForm() {
     this.showForm = this.fb.group({
       showName: ['', Validators.required],
-      seasonsNbr: [''],
+      seasonsNbr: ['', [Validators.required, Validators.min(1)]],
       episodesNbr: this.fb.array([]),
-      episodesTotal: [''],
-      duration: ['00:00'],
+      episodesTotal: ['', [Validators.required, Validators.min(1)]],
+      duration: ['00:00', Validators.required],
       watchingByEp: [''],
       watchEp: [''],
       watchTime: ['00:00'],
-      currentSeason: [1],
-      currentEpisode: [1],
+      currentSeason: [1, Validators.min(1)],
+      currentEpisode: [1, Validators.min(1)],
     });
   }
 
   public calculateTime() {
     // get the show Name
     let showName = this.showForm.value.showName;
+
     // check if the name came from the API (get showName.name), if it isn't in the API get it by showName only
     showName.name
       ? (this.showName = showName.name)
       : (this.showName = showName);
+
     // calculate the average time of an episode by minute
     let averageEpInMin = this.toMinutes(this.showForm.value.duration);
+
+    // if the user started the show already, calculate the rest of eps they didn't watch
+    let watchedEps = 0;
+    for (let i = 0; i < this.showForm.value.currentSeason - 1; i++) {
+      watchedEps += this.showForm.value.episodesNbr[i].number;
+    }
+    watchedEps += this.showForm.value.currentEpisode - 1;
+    let totalEps = this.showForm.value.episodesTotal - watchedEps;
+
     // calculate the average time for all the show in minutes
-    let totalTimeInMinute = this.showForm.value.episodesTotal * averageEpInMin;
+    let totalTimeInMinute = totalEps * averageEpInMin;
     let timeByDay = 0;
-    this.showForm.value.watchingByEp
-      ? // if we get the ep per day, we need to calculate the average time to finish those episodes per day
-        (timeByDay = this.showForm.value.watchEp * averageEpInMin)
-      : (timeByDay = this.toMinutes(this.showForm.value.watchTime));
+
+    if (this.showForm.value.watchingByEp) {
+      // if we get the ep per day, we need to calculate the average time to finish those episodes per day
+      timeByDay = this.showForm.value.watchEp * averageEpInMin;
+      this.resultNbrEpPerDay = this.showForm.value.watchEp;
+      this.resultNbrEpPerWeek = this.resultNbrEpPerDay * 7;
+    } else {
+      timeByDay = this.toMinutes(this.showForm.value.watchTime);
+      let epPerDay = timeByDay / averageEpInMin;
+      this.resultNbrEpPerDay = Math.floor(epPerDay);
+      this.resultNbrEpPerWeek = Math.floor(epPerDay * 7);
+    }
+
     // calculate the time it takes to finish the show
     this.result = this.getTimeNeeded(timeByDay, totalTimeInMinute);
   }

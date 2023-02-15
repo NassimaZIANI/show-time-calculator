@@ -7,7 +7,7 @@
       <form [formGroup]="showForm" (ngSubmit)="calculateTime()">
         <div class="mb-3">
           <p>Do you want to calculate by the</p>
-          <div class="d-flex mb-3">
+          <div class="d-flex mt-3">
             <label for="watchingByEp" class="form-check-label"
               >watching time per day</label
             >
@@ -23,7 +23,7 @@
               >number of episodes per day</label
             >
           </div>
-          <div class="input-group mb-3" *ngIf="watchingByEp">
+          <div class="input-group mt-3" *ngIf="watchingByEp">
             <label class="input-group-text" for="watchEp"
               >Episode number per day</label
             >
@@ -36,7 +36,7 @@
               formControlName="watchEp"
             />
           </div>
-          <div class="input-group mb-3" *ngIf="!watchingByEp">
+          <div class="input-group mt-3" *ngIf="!watchingByEp">
             <label class="input-group-text" for="watchTime"
               >Watching time per day</label
             >
@@ -55,7 +55,7 @@
           you can't find your show in the list below, no worries, just fill out
           the form below
         </p>
-        <div class="input-group mb-3">
+        <div class="input-group mt-3">
           <ng-template #rt let-r="result" let-t="term">
             <img [src]="r['img']" class="mx-1" style="width: 50px" />
             <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
@@ -70,9 +70,25 @@
             [resultTemplate]="rt"
             [inputFormatter]="formatter"
             formControlName="showName"
+            [ngClass]="{
+              'is-valid':
+                showForm.controls['showName'].valid &&
+                showForm.controls['showName'].touched,
+              'is-invalid':
+                showForm.controls['showName'].invalid &&
+                showForm.controls['showName'].touched
+            }"
           />
         </div>
-        <div class="input-group mb-3">
+        <div
+          *ngIf="
+            showForm.controls['showName'].invalid &&
+            showForm.controls['showName'].touched
+          "
+        >
+          <small>Show name is required</small>
+        </div>
+        <div class="input-group mt-3">
           <label class="input-group-text" for="seasonsNbr">Season number</label>
           <input
             type="number"
@@ -83,9 +99,20 @@
             formControlName="seasonsNbr"
           />
         </div>
+        <div
+          *ngIf="
+            showForm.controls['seasonsNbr'].hasError('required') &&
+            showForm.controls['seasonsNbr'].touched
+          "
+        >
+          <small>Number of season is required</small>
+        </div>
+        <div *ngIf="showForm.controls['seasonsNbr'].hasError('min')">
+          <small>A show should at least have 1 season</small>
+        </div>
         <div *ngIf="show" formArrayName="episodesNbr">
           <div
-            class="input-group mb-3"
+            class="input-group mt-3"
             *ngFor="let ep of episodesNbr.controls; let i = index"
             [formGroupName]="i"
           >
@@ -102,9 +129,20 @@
             />
           </div>
         </div>
+        <div
+          *ngIf="
+            showForm.controls['episodesNbr'].hasError('required') &&
+            showForm.controls['episodesNbr'].touched
+          "
+        >
+          <small>Number of episode is required</small>
+        </div>
+        <div *ngIf="showForm.controls['episodesNbr'].hasError('min')">
+          <small>A season should at least have 1 episode</small>
+        </div>
         <div *ngIf="!show" formArrayName="episodesNbr">
           <div
-            class="input-group mb-3"
+            class="input-group mt-3"
             *ngFor="let ep of episodesNbr.controls; let x = index"
             [formGroupName]="x"
           >
@@ -121,8 +159,7 @@
             />
           </div>
         </div>
-
-        <div class="input-group mb-3">
+        <div class="input-group mt-3">
           <label class="input-group-text" for="episodesTotal"
             >Total episode number</label
           >
@@ -135,7 +172,18 @@
             formControlName="episodesTotal"
           />
         </div>
-        <div class="input-group mb-3">
+        <div
+          *ngIf="
+            showForm.controls['episodesTotal'].hasError('required') &&
+            showForm.controls['episodesTotal'].touched
+          "
+        >
+          <small>Total number of episodes is required</small>
+        </div>
+        <div *ngIf="showForm.controls['episodesTotal'].hasError('min')">
+          <small>A show should at least have 1 episode</small>
+        </div>
+        <div class="input-group mt-3">
           <label class="input-group-text" for="duration">Average runtime</label>
           <input
             type="time"
@@ -146,14 +194,22 @@
             formControlName="duration"
           />
         </div>
-        <div class="mb-3">
+        <div
+          *ngIf="
+            showForm.controls['duration'].hasError('required') &&
+            showForm.controls['duration'].touched
+          "
+        >
+          <small>Average duration of a show is required</small>
+        </div>
+        <div class="mt-3">
           <p>
             Did you start the show already? Please enter the season and episode
             you are in
           </p>
 
           <div class="row">
-            <div class="col mb-3">
+            <div class="col mt-3">
               <label for="currentSeason" class="form-label"
                 >Current season I'm at</label
               >
@@ -165,7 +221,7 @@
                 formControlName="currentSeason"
               />
             </div>
-            <div class="col mb-3">
+            <div class="col mt-3">
               <label for="currentEpisode" class="form-label"
                 >Current episode I'm at</label
               >
@@ -220,7 +276,7 @@
               <h3
                 class="rounded-circle bg-secondary d-flex flex-column justify-content-center align-items-center text-white"
               >
-                03
+                {{ resultNbrEpPerDay | number : "2.0" }}
               </h3>
             </div>
           </div>
@@ -230,7 +286,7 @@
               <h3
                 class="rounded-circle bg-secondary d-flex justify-content-center align-items-center text-white"
               >
-                21
+                {{ resultNbrEpPerWeek | number : "2.0" }}
               </h3>
             </div>
           </div>
